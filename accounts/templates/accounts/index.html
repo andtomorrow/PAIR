@@ -1,0 +1,21 @@
+<!--accounts/index.html-->
+
+{% extends 'base.html' %}
+{% block content %}
+{% if request.user.is_authenticated %}
+  <h1>hello, {{ user }}</h1>
+    <form action="{% url 'accounts:logout' %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Logout">
+  </form>
+  <form action="{% url 'accounts:delete' %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="회원탈퇴">
+  </form>
+  <a href="{% url 'accounts:change_password' %}">비밀번호 수정</a>
+{% else %}
+  <h1>hello, </h1>
+  <a href="{% url 'accounts:signup' %}">signup</a>
+  <a href="{% url 'accounts:login' %}">login</a>
+{% endif %}
+{% endblock content %}

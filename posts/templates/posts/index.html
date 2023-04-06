@@ -1,0 +1,16 @@
+<!--posts/index.html-->
+
+{% extends 'base_nav.html' %}
+
+{% block content %}
+<h3>Hello, {{ user }}</h3>
+{% for post in posts %}
+<p>
+  글 번호 - 
+  <a href="{% url 'posts:detail' post.pk %}">{{ post.pk }}</a>
+  / 카테고리 - {{ post.category }}
+</p>
+
+{% endfor %}
+<a href="{% url 'posts:new' %}">NEW</a>
+{% endblock content %}
