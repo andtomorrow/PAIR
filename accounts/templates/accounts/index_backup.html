@@ -15,7 +15,7 @@
   <a href="{% url 'accounts:change_password' %}">비밀번호 수정</a>
 {% else %}
   <h1>hello, </h1>
-  <a href="{% url 'accounts:signup' %}">signup</a>
-  <a href="{% url 'accounts:login' %}">login</a>
+  <a href="{% url 'accounts:signup' %}" class="btn btn-danger">signup</a>
+  <a href="{% url 'accounts:login' %}" class="btn btn-primary">login</a>
 {% endif %}
 {% endblock content %}

@@ -1,16 +1,31 @@
 <!--posts/index.html-->
 
-{% extends 'base_nav.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<h3>Hello, {{ user }}</h3>
-{% for post in posts %}
-<p>
-  글 번호 - 
-  <a href="{% url 'posts:detail' post.pk %}">{{ post.pk }}</a>
-  / 카테고리 - {{ post.category }}
-</p>
-
-{% endfor %}
-<a href="{% url 'posts:new' %}">NEW</a>
+<content>
+  <div class="container d-flex flex-column">
+    <h5 class="fw-normal fs-5 py-3 mt-1 border-bottom text-center"> </h5>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">글 번호</th>
+          <th scope="col">카테고리</th>
+          <th scope="col">제목</th>
+          <th scope="col">작성자</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for post in posts %}
+      <tr>
+        <th scope="row">{{ post.pk }}</th>
+        <td>{{ post.category }}</td>
+        <td><a href="{% url 'posts:detail' post.pk %}">{{ post.title }}</td>
+        <td>{{ post.author }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+  </div>
+</content>
 {% endblock content %}

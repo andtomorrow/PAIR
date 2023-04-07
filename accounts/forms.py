@@ -19,16 +19,21 @@
 # email
 # first_name
 # last_name
-
+from django import forms #추가
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
+from .models import User
 
 class CustomUserCreationForm(UserCreationForm):
+    birthday=forms.DateField(label='생년월일', required=False,widget=forms.DateInput(attrs={'type':'date'})) #추가
     class Meta(UserCreationForm.Meta):
-        model = get_user_model()
-        fields = ('username', 'email', 'first_name', 'last_name','birthday', 'password1', 'password2',)
+        model = User
+        fields = ('username','birthday','email', 'first_name', 'last_name','password1','password2',)
 
 class CustomUserChangeForm(UserChangeForm):
+    birthday=forms.DateField(label='생년월일', required=False,widget=forms.DateInput(attrs={'type':'date'})) #추가
     class Meta(UserChangeForm.Meta):
-        model = get_user_model()
-        fields = ('username','email', 'first_name', 'last_name','birthday','password1','password2',)
+        model = User
+        fields = ('birthday','email', 'first_name', 'last_name',)
+    password=forms.CharField(widget=forms.PasswordInput())

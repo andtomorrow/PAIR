@@ -1,6 +1,9 @@
 <!--posts/index.html-->
 
-{% extends 'base_nav.html' %}
+{% extends 'base.html' %}
+
+{% block sidebar%}
+{% endblock sidebar%}
 
 {% block content %}
 
@@ -8,7 +11,6 @@
 <p>글 제목 - {{ post.title }}</p>
 <p>글 내용 - {{ post.content }}</p>
 <p>글 카테고리 - {{ post.category }}</p>
-
 <a href="{% url 'posts:edit' post.pk %}">EDIT</a><br>
 <form action= "{% url 'posts:delete' post.pk %}" method="POST">
     {% csrf_token %}

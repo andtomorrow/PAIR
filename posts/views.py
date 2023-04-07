@@ -6,30 +6,35 @@ from .models import Post
 
 # Create your views here.
 def index(request):
-    posts = Post.objects.all()
+    category_dct = Post.category_dct.items()
+    category_names = Post.category_dct.values()
+    if request.method == "GET":
+        category = request.GET.get("category")
+        if category == None:
+            posts = Post.objects.all()
+        else:
+            posts = Post.objects.filter(category=category)
     context = {
-        'posts': posts
+    'posts': posts,
+    'category_names': category_names,
+    'category_dct': category_dct,
     }
     return render(request, 'posts/index.html', context)
-
-def new(request):
-    form = PostForm()
-    context = {
-        'form': form,
-    }
-    return render(request, 'posts/new.html', context)
 
 
 @login_required
 def create(request):
-    form = PostForm(request.POST)
-    if form.is_valid():
-        post = form.save()
-        return redirect('posts:detail', post.pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save()
+            return redirect('posts:detail', post.pk)
+    else:
+        form = PostForm()
     context = {
         'form': form,
     }
-    return render(request, 'posts/index.html', context)
+    return render(request, 'posts/create.html', context)
 
 def edit(request, post_pk):
     post=Post.objects.get(pk=post_pk)
@@ -42,8 +47,12 @@ def edit(request, post_pk):
 
 def detail(request, post_pk):
     post=Post.objects.get(pk=post_pk)
+    category_dct = Post.category_dct.items()
+    category_names = Post.category_dct.values()
     context={
         'post':post,
+        'category_names': category_names,
+        'category_dct': category_dct,
     }
     return render(request, 'posts/detail.html',context)
 

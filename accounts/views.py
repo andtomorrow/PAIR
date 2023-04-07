@@ -6,6 +6,8 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import authenticate
+
 # Create your views here.
 def index(request):
     return render(request, 'accounts/index.html')
@@ -15,9 +17,11 @@ def login(request):
         return redirect('posts:index')
     
     if request.method == 'POST':
-        form = AuthenticationForm(request, request.POST)
-        if form.is_valid():
-            auth_login(request, form.get_user())
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
             return redirect('posts:index')
     else:
         form = AuthenticationForm()
@@ -39,7 +43,13 @@ def signup(request):
         form=CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, form.get_user())
+            username=form.cleaned_data.get('username')
+            raw_password=form.cleaned_data.get('password1')
+            birthday=form.cleaned_data.get('birthday')
+            user=authenticate(username=username, password=raw_password)
+            user.birthday=birthday
+            user.save()
+            auth_login(request,user)
             return redirect('posts:index')
     else:
         form=CustomUserCreationForm()
@@ -53,14 +63,20 @@ def delete(request):
     request.user.delete()
     return redirect('posts:index')
 
-
+from django.contrib import messages
 @login_required
 def update(request):
     if request.method=='POST':
         form=CustomUserChangeForm(data=request.POST, instance=request.user)
         if form.is_valid():
-            form.save()
-            return redirect('posts:index')
+            password=form.cleaned_data.get('password')
+            if request.user.check_password(password):
+                form.save()
+                messages.success(request,'회원정보가 수정되었습니다.')
+                #update_session_auth_hash(request,user)
+                return redirect('posts:index')
+            else:
+                messages.error(request,'비밀번호가 일치하지 않습니다.')
     else:
         form=CustomUserChangeForm(instance=request.user)
     context={
@@ -71,10 +87,10 @@ def update(request):
 @login_required
 def change_password(request):
     if request.method=='POST':
-        form=PasswordChangeForm(request.user,request.POST)
+        form=PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user=form.save()
-            update_session_auth_hash(request,user) #암호 변경시 세션 무효화 방지
+            update_session_auth_hash(request, user) #암호 변경시 세션 무효화 방지
             return redirect('posts:index')
     else:
         form=PasswordChangeForm(request.user)
